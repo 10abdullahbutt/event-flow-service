@@ -25,7 +25,6 @@ export class ProducerController {
   })
   @ApiResponse({ status: 400, description: 'Invalid request data' })
   async publishEvent(@Body() dto: UserEventDto): Promise<{ status: string; eventId: string }> {
-    // Ensure eventId and createdAt are set
     const event: UserEvent = {
       eventId: dto.eventId || randomUUID(),
       userId: dto.userId,
@@ -34,7 +33,6 @@ export class ProducerController {
       createdAt: dto.createdAt || new Date().toISOString(),
     };
 
-    // Publish to event bus (later: this will publish to Kafka topic 'user-events' with key=userId)
     await this.eventBus.publishUserEvent(event);
 
     return {

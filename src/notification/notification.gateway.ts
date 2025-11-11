@@ -35,10 +35,6 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
     client.emit('left', { userId, message: 'Left notification room' });
   }
 
-  /**
-   * Send notification to a specific user via Socket.IO room.
-   * Clients should join a room named by their userId.
-   */
   sendToUser(userId: string, event: string, payload: any): void {
     if (!this.server) {
       this.logger.warn('Socket.IO server not initialized');

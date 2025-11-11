@@ -2,7 +2,6 @@ import { MigrationInterface, QueryRunner, Table, TableIndex, TableUnique } from 
 
 export class InitialSchema1699999999999 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Create audit_logs table
     await queryRunner.createTable(
       new Table({
         name: 'audit_logs',
@@ -45,7 +44,6 @@ export class InitialSchema1699999999999 implements MigrationInterface {
       true,
     );
 
-    // Create unique constraint on eventId for audit_logs
     await queryRunner.createIndex(
       'audit_logs',
       new TableIndex({
@@ -55,7 +53,6 @@ export class InitialSchema1699999999999 implements MigrationInterface {
       }),
     );
 
-    // Create index on userId for audit_logs
     await queryRunner.createIndex(
       'audit_logs',
       new TableIndex({
@@ -64,7 +61,6 @@ export class InitialSchema1699999999999 implements MigrationInterface {
       }),
     );
 
-    // Create index on createdAt for audit_logs
     await queryRunner.createIndex(
       'audit_logs',
       new TableIndex({
@@ -73,7 +69,6 @@ export class InitialSchema1699999999999 implements MigrationInterface {
       }),
     );
 
-    // Create notifications table
     await queryRunner.createTable(
       new Table({
         name: 'notifications',
@@ -117,7 +112,6 @@ export class InitialSchema1699999999999 implements MigrationInterface {
       true,
     );
 
-    // Create unique constraint on eventId for notifications
     await queryRunner.createIndex(
       'notifications',
       new TableIndex({
@@ -127,7 +121,6 @@ export class InitialSchema1699999999999 implements MigrationInterface {
       }),
     );
 
-    // Create index on userId for notifications
     await queryRunner.createIndex(
       'notifications',
       new TableIndex({
@@ -136,7 +129,6 @@ export class InitialSchema1699999999999 implements MigrationInterface {
       }),
     );
 
-    // Create index on status for notifications
     await queryRunner.createIndex(
       'notifications',
       new TableIndex({
@@ -145,7 +137,6 @@ export class InitialSchema1699999999999 implements MigrationInterface {
       }),
     );
 
-    // Create index on createdAt for notifications
     await queryRunner.createIndex(
       'notifications',
       new TableIndex({
@@ -156,10 +147,7 @@ export class InitialSchema1699999999999 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Drop notifications table
     await queryRunner.dropTable('notifications', true);
-
-    // Drop audit_logs table
     await queryRunner.dropTable('audit_logs', true);
   }
 }

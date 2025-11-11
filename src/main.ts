@@ -6,7 +6,6 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable validation pipe for DTOs
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -15,13 +14,11 @@ async function bootstrap() {
     }),
   );
 
-  // Enable CORS for WebSocket connections
   app.enableCors();
 
-  // Swagger setup
   const config = new DocumentBuilder()
     .setTitle('Event Flow Service API')
-    .setDescription('Real-time Notification & Audit Pipeline - Event-driven service for user events')
+    .setDescription('Real-time Notification & Audit Pipeline')
     .setVersion('1.0')
     .addTag('events', 'Event publishing and management')
     .addTag('notifications', 'Notification management')

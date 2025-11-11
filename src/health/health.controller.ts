@@ -26,7 +26,6 @@ export class HealthController {
       },
     };
 
-    // Check database
     try {
       await this.connection.query('SELECT 1');
       checks.services.database = 'healthy';
@@ -35,14 +34,12 @@ export class HealthController {
       checks.status = 'unhealthy';
     }
 
-    // Check Redis (optional)
     if (this.redis) {
       try {
         await this.redis.ping();
         checks.services.redis = 'healthy';
       } catch (error) {
         checks.services.redis = 'unhealthy';
-        // Redis is optional, so don't mark overall as unhealthy
       }
     } else {
       checks.services.redis = 'not_configured';

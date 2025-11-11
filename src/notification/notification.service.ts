@@ -20,10 +20,6 @@ export class NotificationService {
     private readonly eventBus: EventBusService,
   ) {}
 
-  /**
-   * Handle user events from the event bus.
-   * Later: This will be triggered by Kafka consumer @EventPattern('user-events')
-   */
   @OnEvent('user-events')
   async handleUserEvent(event: UserEvent): Promise<void> {
     const { eventId, userId, type, payload } = event;
@@ -33,7 +29,6 @@ export class NotificationService {
       return;
     }
 
-    // Deduplication: check Redis for duplicate eventId
     const dedupeKey = `notify:d:${eventId}`;
     try {
       const seen = await this.redis.get(dedupeKey);
@@ -41,14 +36,11 @@ export class NotificationService {
         this.logger.log(`Duplicate event ${eventId} skipped (redis)`);
         return;
       }
-      // Mark as seen for 1 day
       await this.redis.set(dedupeKey, '1', 'EX', 60 * 60 * 24);
     } catch (err) {
       this.logger.error('Redis dedupe check failed — continuing (best-effort)', err as any);
-      // Continue even if redis fails
     }
 
-    // Rate limiting: max 5 notifications per 60s per user
     const userRateKey = `notify:rate:${userId}`;
     try {
       const cnt = await this.redis.incr(userRateKey);
@@ -74,10 +66,8 @@ export class NotificationService {
       }
     } catch (err) {
       this.logger.error('Redis rate-limit failed — continuing (best-effort)', err as any);
-      // Continue
     }
 
-    // Persist notification (idempotent via unique eventId on entity)
     try {
       const rec = this.repo.create({
         eventId,
@@ -98,7 +88,6 @@ export class NotificationService {
       }
     }
 
-    // Emit realtime notification via Socket.IO gateway
     try {
       const notifyPayload = {
         eventId,
@@ -109,7 +98,6 @@ export class NotificationService {
 
       this.gateway.sendToUser(userId, 'notification', notifyPayload);
 
-      // Update DB as sent
       try {
         await this.repo.update({ eventId }, { status: 'sent' });
       } catch (e) {
@@ -125,7 +113,6 @@ export class NotificationService {
         this.logger.error('Failed to mark notification as failed', e as any);
       }
 
-      // On persistent failure, push to DLQ for later reprocessing
       await this.eventBus.sendToDLQ(event, 'realtime_send_failed');
     }
   }

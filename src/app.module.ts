@@ -11,13 +11,11 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
-    // Load environment variables from .env file
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
     EventEmitterModule.forRoot(),
-    // Configure TypeORM with ConfigService
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -28,10 +26,9 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
         password: configService.get('POSTGRES_PASSWORD', 'postgres'),
         database: configService.get('POSTGRES_DB', 'audit_db'),
         entities: [AuditLog, Notification],
-        // Use synchronize only in development, migrations in production
         synchronize: configService.get('NODE_ENV') !== 'production',
         migrations: configService.get('NODE_ENV') === 'production' ? ['dist/migrations/*.js'] : [],
-        migrationsRun: configService.get('NODE_ENV') === 'production', // Auto-run migrations in production
+        migrationsRun: configService.get('NODE_ENV') === 'production',
         logging: configService.get('NODE_ENV') === 'development',
       }),
       inject: [ConfigService],

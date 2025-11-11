@@ -3,13 +3,8 @@ import { config } from 'dotenv';
 import { AuditLog } from './audit/audit-log.entity';
 import { Notification } from './notification/notification.entity';
 
-// Load .env file for migrations (TypeORM CLI doesn't use NestJS ConfigModule)
 config();
 
-/**
- * DataSource configuration for TypeORM migrations
- * This file is used by TypeORM CLI to run migrations
- */
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
   host: process.env.POSTGRES_HOST || 'localhost',
