@@ -10,7 +10,7 @@ Event-driven microservice for real-time notifications and audit logging.
 - Redis
 - Socket.IO
 - Swagger
-
+- Kafka
 ## Setup
 
 ```bash
